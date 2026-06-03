@@ -8,6 +8,7 @@ from app.config import get_settings
 from app.extractors.csv_extractor import CsvExtractor
 from app.extractors.docx_extractor import DocxExtractor
 from app.extractors.image_extractor import ImageExtractor
+from app.extractors.numbers_extractor import NumbersExtractor
 from app.extractors.pdf_extractor import PdfExtractor
 from app.extractors.text_extractor import TextExtractor
 from app.extractors.xlsx_extractor import XlsxExtractor
@@ -79,6 +80,7 @@ class ExtractionService:
             "pdf": PdfExtractor(),
             "txt": TextExtractor(),
             "md": TextExtractor(),
+            "numbers": NumbersExtractor(),
             "docx": DocxExtractor(),
             "xlsx": XlsxExtractor(),
             "csv": CsvExtractor(),

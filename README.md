@@ -8,6 +8,7 @@ Servicio ligero de extraccion de texto y OCR.
 - PyMuPDF para PDFs
 - python-docx para DOCX
 - openpyxl para XLSX
+- LibreOffice Calc para convertir Numbers a XLSX
 - Pillow + Tesseract OCR para imagenes y PDFs escaneados
 - Docker
 
@@ -19,6 +20,8 @@ source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
+
+Para extraer archivos `.numbers` localmente necesitas LibreOffice instalado y disponible como `soffice` o `libreoffice` en el PATH. En Docker ya viene instalado.
 
 ## Ejecutar con Docker
 
@@ -103,6 +106,7 @@ GET /v1/formats
     "jpeg",
     "jpg",
     "md",
+    "numbers",
     "pdf",
     "png",
     "tiff",
@@ -124,7 +128,7 @@ Content-Type: multipart/form-data
 
 | Campo | Tipo | Requerido | Default | Valores permitidos | Descripcion |
 |---|---|---:|---|---|---|
-| `file` | File | Si | - | `pdf`, `txt`, `md`, `docx`, `xlsx`, `csv`, `jpg`, `jpeg`, `png`, `webp`, `tiff` | Archivo a procesar |
+| `file` | File | Si | - | `pdf`, `txt`, `md`, `docx`, `xlsx`, `numbers`, `csv`, `jpg`, `jpeg`, `png`, `webp`, `tiff` | Archivo a procesar |
 | `ocr` | string | No | `auto` | `auto`, `true`, `false` | Modo OCR |
 | `language` | string | No | `spa+eng` | Cualquier idioma de Tesseract instalado en el runtime | Idioma para OCR |
 | `output` | string | No | `text` | `text`, `pages`, `markdown` | Estilo de salida preferido |
@@ -241,6 +245,14 @@ curl -X POST http://localhost:8001/v1/extract \
 ```bash
 curl -X POST http://localhost:8001/v1/extract \
   -F "file=@ventas.xlsx" \
+  -F "output=markdown"
+```
+
+### Extraer Numbers como tablas Markdown
+
+```bash
+curl -X POST http://localhost:8001/v1/extract \
+  -F "file=@ventas.numbers" \
   -F "output=markdown"
 ```
 
