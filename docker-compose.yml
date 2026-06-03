@@ -1,0 +1,11 @@
+services:
+  hemia-extract-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      MAX_FILE_SIZE_MB: 25
+      MAX_PDF_PAGES: 50
+      MAX_IMAGE_PIXELS: 20000000
+      OCR_DEFAULT_LANGUAGE: spa+eng
+      REQUEST_TIMEOUT_SECONDS: 60

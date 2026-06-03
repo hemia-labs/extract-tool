@@ -1,0 +1,73 @@
+name: Build and deploy Hemia Extract API
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate app imports
+        run: python -m compileall app
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+
+      - name: Upload files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "app,Dockerfile,docker-compose.yml,requirements.txt,README.md"
+          target: ${{ secrets.APP_PATH }}
+
+      - name: Build and restart Docker Compose
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+
+            cd "${{ secrets.APP_PATH }}"
+
+            MAX_FILE_SIZE_MB="${{ secrets.MAX_FILE_SIZE_MB }}"
+            MAX_PDF_PAGES="${{ secrets.MAX_PDF_PAGES }}"
+            MAX_IMAGE_PIXELS="${{ secrets.MAX_IMAGE_PIXELS }}"
+            OCR_DEFAULT_LANGUAGE="${{ secrets.OCR_DEFAULT_LANGUAGE }}"
+            REQUEST_TIMEOUT_SECONDS="${{ secrets.REQUEST_TIMEOUT_SECONDS }}"
+
+            cat > .env << EOF
+            MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB:-25}
+            MAX_PDF_PAGES=${MAX_PDF_PAGES:-50}
+            MAX_IMAGE_PIXELS=${MAX_IMAGE_PIXELS:-20000000}
+            OCR_DEFAULT_LANGUAGE=${OCR_DEFAULT_LANGUAGE:-spa+eng}
+            REQUEST_TIMEOUT_SECONDS=${REQUEST_TIMEOUT_SECONDS:-60}
+            EOF
+
+            docker compose pull || true
+            docker compose up -d --build --remove-orphans
+            docker image prune -f
+
+            docker compose ps
