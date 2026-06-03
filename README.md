@@ -26,6 +26,8 @@ uvicorn app.main:app --reload
 docker compose up --build
 ```
 
+Con Docker, el host expone la API en `http://localhost:8001` para no chocar con Coolify. Dentro del contenedor FastAPI sigue escuchando en `8000`.
+
 ## Deploy con GitHub Actions
 
 El workflow [.github/workflows/deploy.yml](.github/workflows/deploy.yml) se ejecuta en cada push a `main`.
@@ -194,7 +196,7 @@ Content-Type: multipart/form-data
 ### Extraer PDF con OCR automatico
 
 ```bash
-curl -X POST http://localhost:8000/v1/extract \
+curl -X POST http://localhost:8001/v1/extract \
   -F "file=@documento.pdf" \
   -F "ocr=auto" \
   -F "language=spa" \
@@ -204,7 +206,7 @@ curl -X POST http://localhost:8000/v1/extract \
 ### Forzar OCR en un PDF escaneado
 
 ```bash
-curl -X POST http://localhost:8000/v1/extract \
+curl -X POST http://localhost:8001/v1/extract \
   -F "file=@contrato-escaneado.pdf" \
   -F "ocr=true" \
   -F "language=spa+eng"
@@ -213,14 +215,14 @@ curl -X POST http://localhost:8000/v1/extract \
 ### Extraer texto plano
 
 ```bash
-curl -X POST http://localhost:8000/v1/extract \
+curl -X POST http://localhost:8001/v1/extract \
   -F "file=@notas.txt"
 ```
 
 ### Extraer archivo Markdown
 
 ```bash
-curl -X POST http://localhost:8000/v1/extract \
+curl -X POST http://localhost:8001/v1/extract \
   -F "file=@documento.md" \
   -F "output=markdown"
 ```
@@ -228,14 +230,14 @@ curl -X POST http://localhost:8000/v1/extract \
 ### Extraer DOCX
 
 ```bash
-curl -X POST http://localhost:8000/v1/extract \
+curl -X POST http://localhost:8001/v1/extract \
   -F "file=@reporte.docx"
 ```
 
 ### Extraer XLSX como tablas Markdown
 
 ```bash
-curl -X POST http://localhost:8000/v1/extract \
+curl -X POST http://localhost:8001/v1/extract \
   -F "file=@ventas.xlsx" \
   -F "output=markdown"
 ```
@@ -243,7 +245,7 @@ curl -X POST http://localhost:8000/v1/extract \
 ### Extraer CSV como tabla Markdown
 
 ```bash
-curl -X POST http://localhost:8000/v1/extract \
+curl -X POST http://localhost:8001/v1/extract \
   -F "file=@clientes.csv" \
   -F "output=markdown"
 ```
@@ -251,7 +253,7 @@ curl -X POST http://localhost:8000/v1/extract \
 ### OCR de imagen
 
 ```bash
-curl -X POST http://localhost:8000/v1/extract \
+curl -X POST http://localhost:8001/v1/extract \
   -F "file=@factura.png" \
   -F "language=spa"
 ```
