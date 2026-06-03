@@ -28,6 +28,8 @@ docker compose up --build
 
 Con Docker, el host expone la API en `http://localhost:8001` para no chocar con Coolify. Dentro del contenedor FastAPI sigue escuchando en `8000`.
 
+La imagen Docker local se crea como `hemia-extract-api:latest`.
+
 ## Deploy con GitHub Actions
 
 El workflow [.github/workflows/deploy.yml](.github/workflows/deploy.yml) se ejecuta en cada push a `main`.

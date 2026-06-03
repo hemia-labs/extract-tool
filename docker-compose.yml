@@ -1,5 +1,6 @@
 services:
   hemia-extract-api:
+    image: hemia-extract-api:latest
     build: .
     ports:
       - "8001:8000"
