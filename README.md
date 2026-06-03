@@ -43,12 +43,15 @@ Secrets requeridos:
 
 | Secret | Descripcion |
 |---|---|
-| `TAILSCALE_AUTHKEY` | Auth key para conectar el runner a Tailscale |
+| `TAILSCALE_OAUTH_CLIENT_ID` | OAuth Client ID de Tailscale |
+| `TAILSCALE_OAUTH_SECRET` | OAuth Client secret de Tailscale |
 | `SSH_HOST` | Host/IP del server |
 | `SSH_USER` | Usuario SSH |
 | `SSH_PORT` | Puerto SSH |
 | `SSH_PRIVATE_KEY` | Llave privada SSH |
 | `APP_PATH` | Ruta destino en el server |
+
+El OAuth client de Tailscale debe poder crear nodos efimeros con el tag `tag:ci`. Ese tag debe existir en tu tailnet.
 
 Secrets opcionales:
 
