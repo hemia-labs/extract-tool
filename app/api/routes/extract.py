@@ -9,7 +9,7 @@ from app.utils.errors import ExtractionError
 router = APIRouter(tags=["extract"])
 
 OcrMode = Literal["auto", "true", "false"]
-OutputMode = Literal["text", "pages", "markdown"]
+OutputMode = Literal["text", "pages", "markdown", "chunks"]
 
 
 @router.post("/extract", response_model=ExtractResponse)

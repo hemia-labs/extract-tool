@@ -12,8 +12,10 @@ from app.extractors.numbers_extractor import NumbersExtractor
 from app.extractors.pdf_extractor import PdfExtractor
 from app.extractors.text_extractor import TextExtractor
 from app.extractors.xlsx_extractor import XlsxExtractor
+from app.schemas.chunk import Chunk
 from app.schemas.extract_response import ExtractMetadata, ExtractResponse
 from app.schemas.page_result import PageResult
+from app.services.chunk_parser import parse_chunks
 from app.services.mime_detector import detect_file
 from app.services.text_normalizer import join_pages, normalize_text
 from app.utils.errors import ExtractionFailedError
@@ -50,6 +52,12 @@ class ExtractionService:
                 for page in result["pages"]
             ]
             text = join_pages([page.model_dump() for page in pages])
+            chunks_mode = output == "chunks"
+            chunks = (
+                [Chunk(**chunk) for chunk in parse_chunks(text, source=Path(filename).stem)]
+                if chunks_mode
+                else []
+            )
             processing_ms = int((perf_counter() - started) * 1000)
 
             return ExtractResponse(
@@ -57,8 +65,9 @@ class ExtractionService:
                 filename=filename,
                 mimeType=mime_type,
                 extension=extension,
-                text=text,
-                pages=pages,
+                text=None if chunks_mode else text,
+                pages=None if chunks_mode else pages,
+                chunks=chunks,
                 metadata=ExtractMetadata(
                     ocrUsed=bool(result["metadata"].get("ocrUsed", False)),
                     language=language,
