@@ -9,3 +9,4 @@ Pillow==11.1.0
 pytesseract==0.3.13
 python-magic==0.4.27
 chardet==5.2.0
+PyYAML==6.0.3

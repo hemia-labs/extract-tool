@@ -43,6 +43,8 @@ class ExtractionService:
             extension, mime_type = detect_file(temp_path, filename)
             extractor = self._extractor_for(extension)
             result = extractor.extract(temp_path, ocr=ocr, language=language, output=output)
+            chunks_mode = output == "chunks"
+            chunk_text = join_pages(result["pages"], preserve_inline_spacing=True)
             pages = [
                 PageResult(
                     page=page["page"],
@@ -52,9 +54,8 @@ class ExtractionService:
                 for page in result["pages"]
             ]
             text = join_pages([page.model_dump() for page in pages])
-            chunks_mode = output == "chunks"
             chunks = (
-                [Chunk(**chunk) for chunk in parse_chunks(text, source=Path(filename).stem)]
+                [Chunk(**chunk) for chunk in parse_chunks(chunk_text, source=Path(filename).stem)]
                 if chunks_mode
                 else []
             )

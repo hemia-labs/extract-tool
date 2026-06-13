@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic import BaseModel, ConfigDict
 
@@ -18,4 +18,8 @@ class Chunk(BaseModel):
     title: str
     question: Optional[str] = None
     answer: str = ""
-    actions: list[QuickAction] = []
+    agent: Optional[str] = None
+    intent: Optional[str] = None
+    # A string is a reference to a catalog action id; an object is an inline
+    # action definition.
+    actions: list[Union[str, QuickAction]] = []
